@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "fountainhead"
+version = "0.1.0"
+description = "Persisted event queue"
+authors = ["fdv1 <francois@pytek.io>"]
+license = "GPL"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.7, <4.0"
+rmy = "^0.1.0"
+anyio = "^3.7.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.2"
+black = "^23.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
