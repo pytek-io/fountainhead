@@ -1,8 +1,7 @@
-import contextlib
 import logging
 from datetime import datetime
 from pickle import loads
-from typing import Any, AsyncIterator, Optional, Iterator
+from typing import Any, AsyncIterator, Optional
 
 import asyncstdlib
 
@@ -56,15 +55,3 @@ class Server:
                     await self.read_event(topic, time_stamp),
                 )
             )
-
-
-@contextlib.asynccontextmanager
-async def create_async_client(host_name: str, port: int) -> AsyncIterator[Server]:
-    async with rmy.connect(host_name, port) as client:
-        yield await client.fetch_remote_object()
-
-
-@contextlib.contextmanager
-def create_sync_client(host_name: str, port: int) -> Iterator[Server]:
-    with rmy.create_sync_client(host_name, port) as client:
-        yield client.fetch_remote_object()

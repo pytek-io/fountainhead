@@ -8,7 +8,7 @@ from fountainhead.server import Server
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    parser = argparse.ArgumentParser(prog="Transactor", description="store events")
+    parser = argparse.ArgumentParser(prog="Fountainhead", description="store events")
     parser.add_argument(
         "folder", type=str, nargs="?", help="Stored events location", default="events"
     )
