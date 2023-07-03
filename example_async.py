@@ -13,9 +13,9 @@ from rmy import cancel_task_group_on_signal
 
 async def write_events(client, topic):
     while True:
-        await anyio.sleep(random.random() * 5)
         time_stamp = await client.write_event(topic, dumps({"origin": "sftp", "s3": "fdsljd"}))
         logging.info(f"Saved {topic} event at {time_stamp}")
+        await anyio.sleep(random.random() * 1)
 
 
 async def subscribe_to_events(client, topic: str):

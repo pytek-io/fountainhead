@@ -1,9 +1,16 @@
 import argparse
 import logging
-import anyio.abc
-import anyio
-from rmy import start_tcp_server
+import asyncio
+from rmy.server import start_tcp_server
 from fountainhead.server import Server
+from fountainhead.storage.db import DBStorage
+from sqlalchemy.ext.asyncio import create_async_engine
+
+
+async def main(engine):
+    db = DBStorage(engine)
+    await db.initialize()
+    await start_tcp_server(args.port, Server(db))
 
 
 if __name__ == "__main__":
@@ -14,4 +21,5 @@ if __name__ == "__main__":
     )
     parser.add_argument("port", type=int, help="tcp port to use", nargs="?", default=8765)
     args = parser.parse_args()
-    anyio.run(start_tcp_server, args.port, Server(args.folder))
+    engine = create_async_engine("sqlite+aiosqlite:///test.sqlite")
+    asyncio.run(main(engine))

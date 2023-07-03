@@ -5,8 +5,8 @@ from typing import Any, AsyncIterator, Optional
 
 import asyncstdlib
 
-import rmy
-from .storage import Storage
+from .pubsub import PubSubManager
+from .abc import Storage
 
 
 def load_time_stamp_and_value(time_stamp_and_value):
@@ -15,25 +15,24 @@ def load_time_stamp_and_value(time_stamp_and_value):
 
 
 class Server:
-    def __init__(self, event_folder) -> None:
-        self.storage = Storage(event_folder)
-        self.pub_sub_manager = rmy.PubSubManager()
+    def __init__(self, storage: Storage) -> None:
+        self.storage = storage
+        self.pub_sub_manager = PubSubManager()
 
     async def write_event(
         self,
         topic: str,
         event: bytes,
         time_stamp: Optional[datetime] = None,
-        overwrite: bool = False,
     ):
         time_stamp = time_stamp or datetime.now()
-        await self.storage.write(topic, str(time_stamp.timestamp()), event, overwrite)
+        await self.storage.write(str(time_stamp.timestamp()), topic, event)
         logging.info(f"Saved event from {self} under: {topic}{time_stamp}")
         self.pub_sub_manager.broadcast_to_subscriptions(topic, time_stamp)
         return time_stamp
 
-    async def read_event(self, topic: str, time_stamp: datetime):
-        return await self.storage.read(topic, str(time_stamp.timestamp()))
+    async def read_event(self, time_stamp: datetime):
+        return await self.storage.read(time_stamp)
 
     async def read_events(
         self,
@@ -52,6 +51,6 @@ class Server:
                 if time_stamps_only
                 else (
                     time_stamp,
-                    await self.read_event(topic, time_stamp),
+                    await self.read_event(time_stamp),
                 )
             )
