@@ -2,10 +2,10 @@ import anyio
 import os
 from datetime import datetime
 from typing import Any, Optional
+from fountainhead.abc import Storage
 
 
-
-class Disk:
+class Disk(Storage):
     def __init__(self, base_folder: str) -> None:
         self.base_folder = base_folder
 

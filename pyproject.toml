@@ -8,13 +8,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.8, <4.0"
-rmy = "^0.3"
 anyio = "^3.7.0"
 mpmc = "^0.1.4"
 sqlalchemy = "^2.0.17"
 aiosqlite = "^0.19.0"
 greenlet = "^2.0.2"
 asyncpg = "^0.27.0"
+rmy = {git = "https://github.com/pytek-io/rmy.git"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.2"

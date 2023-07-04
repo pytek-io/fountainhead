@@ -162,3 +162,5 @@ events
 issues.txt
 test.py
 poetry.lock
+test.sqlite
+.vscode/launch.json

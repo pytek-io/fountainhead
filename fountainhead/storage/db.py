@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import Any, Optional
 
-from sqlalchemy.ext.asyncio import AsyncSession
 import sqlalchemy as sqla
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from fountainhead.abc import Storage
 
 metadata = sqla.MetaData()
 
@@ -13,7 +14,7 @@ data_col = sqla.Column("data", sqla.BLOB())
 Record = sqla.Table("Record", metadata, id_col, topic_col, data_col)
 
 
-class DBStorage:
+class DBStorage(Storage):
     def __init__(self, engine) -> None:
         self.engine = engine
         self.metadata = sqla.MetaData()
@@ -44,7 +45,7 @@ class DBStorage:
         start: Optional[datetime],
         end: Optional[datetime],
     ):
-        conditions = [topic_col == topic]
+        conditions = [topic_col.regexp_match(topic)]
         if start:
             conditions.append(id_col >= start)
         if end:
