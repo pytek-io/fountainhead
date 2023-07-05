@@ -3,7 +3,7 @@ from datetime import datetime
 from pickle import loads
 from typing import Any, AsyncIterator, Optional
 
-import asyncstdlib
+from rmy import RemoteGeneratorPull, RemoteGeneratorPush
 
 from .pubsub import PubSubManager
 from .abc import Storage
@@ -28,7 +28,9 @@ class Server:
         time_stamp = time_stamp or datetime.now()
         await self.storage.write(str(time_stamp.timestamp()), topic, event)
         logging.info(f"Saved event from {self} under: {topic}{time_stamp}")
-        self.pub_sub_manager.broadcast_to_subscriptions(topic, (time_stamp, topic, event))
+        self.pub_sub_manager.broadcast_to_subscriptions(
+            topic, (time_stamp, topic, event)
+        )
         return time_stamp
 
     async def read_event(self, time_stamp: datetime):
@@ -40,9 +42,6 @@ class Server:
         start: Optional[datetime] = None,
         end: Optional[datetime] = None,
     ) -> AsyncIterator[Any]:
-        updates = self.pub_sub_manager.subscribe(topic)
-        existing_tags = self.storage.list_topic(topic, start, end)
-        async for time_stamp, topic, data in asyncstdlib.chain(existing_tags, updates):
-            if end and datetime.now() > end:
-                break
-            yield time_stamp, topic, data
+        return RemoteGeneratorPull(
+           self.storage.list_topic(topic, start, end)
+        ), RemoteGeneratorPush(self.pub_sub_manager.subscribe(topic))

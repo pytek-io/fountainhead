@@ -5,11 +5,11 @@ import datetime
 
 
 def main(args):
-    with create_sync_client(args.host, args.port) as client:
+    with create_sync_client(args.host, args.port) as server:
         topic = f"uploads/client_{0}"
-        t = client.write_event(topic, dumps({"whatever": 1}))
+        time_stamp = server.write_event(topic, dumps({"whatever": 1}))
         start = datetime.datetime.now() - datetime.timedelta(minutes=1)
-        for time_stamp, value in client.read_events(topic, start, None):
+        for time_stamp, value in server.read_events(topic, start):
             print(time_stamp, value)
 
 
